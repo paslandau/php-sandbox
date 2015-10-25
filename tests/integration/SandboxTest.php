@@ -1,12 +1,9 @@
 <?php
 
-use paslandau\PageRank\Calculation\PageRank;
-use paslandau\PageRank\Edge;
-use paslandau\PageRank\Graph;
-use paslandau\PageRank\Node;
 use paslandau\PhpSandbox\Sandbox;
 use paslandau\PhpSandbox\WhitelistVisitor;
-use PhpParser\ParserFactory;
+use PhpParser\Lexer;
+use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 
 class SandboxTest extends PHPUnit_Framework_TestCase
@@ -17,7 +14,8 @@ class SandboxTest extends PHPUnit_Framework_TestCase
     {
         $_GET["foo"] = 1;
 
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+//        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = new Parser(new Lexer);
         $printer = new Standard();
         $visitor = new WhitelistVisitor();
 
@@ -25,7 +23,6 @@ class SandboxTest extends PHPUnit_Framework_TestCase
 
         $code = '
         global $_GET;
-        global $_GET["foo"];
 $_GET["foo"] = 2;
 ';
         $res = $sandbox->execute($code);
@@ -37,7 +34,8 @@ $_GET["foo"] = 2;
     {
         $_GET["foo"] = 1;
 
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+//        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = new Parser(new Lexer);
         $printer = new Standard();
         $visitor = new WhitelistVisitor();
 
@@ -57,7 +55,8 @@ $_GET["foo"] = 2;
     public function test_ShouldNotAccessThis()
     {
         $this->setExpectedException(PHPUnit_Framework_Error_Notice::class);
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+//        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = new Parser(new Lexer);
         $printer = new Standard();
         $visitor = new WhitelistVisitor();
 
@@ -74,7 +73,8 @@ $_GET["foo"] = 2;
     {
         $this->setExpectedException(paslandau\PhpSandbox\SandboxException::class);
 
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+//        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = new Parser(new Lexer);
         $printer = new Standard();
         $visitor = new WhitelistVisitor([],[PhpParser\Node\Stmt\Return_::class]);
         // PhpParser\Node\Expr\ShellExec::class <<< is not allowed
@@ -91,7 +91,8 @@ $_GET["foo"] = 2;
 
     public function test_execute()
     {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+//        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = new Parser(new Lexer);
         $printer = new Standard();
         $visitor = new WhitelistVisitor();
 

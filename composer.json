@@ -24,10 +24,10 @@
   "minimum-stability": "dev",
   "require": {
     "php": "~5.5",
-    "nikic/php-parser": "2.0.0beta1",
-    "paslandau/io-utility": "^0.1.2"
+    "nikic/php-parser": "^1.4.1"
   },
   "require-dev": {
+    "paslandau/io-utility": "^0.1.2",
     "phpunit/phpunit": "~4"
   }
 }

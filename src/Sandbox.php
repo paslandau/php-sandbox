@@ -6,7 +6,6 @@ use Closure;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PhpParser\Parser;
-use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinterAbstract;
 
 class Sandbox{
@@ -72,19 +71,23 @@ class Sandbox{
             "args" => "",
             "code" => ""
         ];
-        foreach($GLOBALS as $key => $val){
-            if(array_key_exists($key,$preserved)){
-                continue;
+        if(isset($GLOBALS) && is_array($GLOBALS)) {
+            foreach ($GLOBALS as $key => $val) {
+                if (array_key_exists($key, $preserved)) {
+                    continue;
+                }
+                $backup[$key] = $val;
             }
-            $backup[$key] = $val;
         }
 
         //start new scope so that  $backup wont be available to eval
         $fn = function($code) use ($args){
 
-            foreach($GLOBALS as $key => $val){
-                global $$key; // @see http://php.net/manual/en/language.variables.predefined.php#30484 && http://phpover.org/Language_Reference/Variables/_security_issue_and_workaround_
-                $$key = null;
+            if(isset($GLOBALS) && is_array($GLOBALS)) {
+                foreach ($GLOBALS as $key => $val) {
+                    global $$key; // @see http://php.net/manual/en/language.variables.predefined.php#30484 && http://phpover.org/Language_Reference/Variables/_security_issue_and_workaround_
+                    $$key = null;
+                }
             }
 
             // make variables available
@@ -100,12 +103,9 @@ class Sandbox{
 
             return ["result" => $res, "args" => $args];
         };
-//        ob_start();
 
         $fn = Closure::bind($fn, null, null); // make $this unavailable
         $res = $fn($code);
-
-//        ob_end_clean();
 
         /**
          * Reassign GLOBAL values
