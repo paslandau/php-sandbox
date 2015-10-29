@@ -59,6 +59,8 @@ class Sandbox{
      * @param $code
      * @param array $args
      * @return array ["result" => $resultOfCode, "args" => []];
+     * @throws \Exception
+     * @throws null
      */
     public function executeWithArgs($code, array $args = []){
         /**
@@ -85,9 +87,12 @@ class Sandbox{
 
             if(isset($GLOBALS) && is_array($GLOBALS)) {
                 foreach ($GLOBALS as $key => $val) {
-                    global $$key; // @see http://php.net/manual/en/language.variables.predefined.php#30484 && http://phpover.org/Language_Reference/Variables/_security_issue_and_workaround_
-                    $$key = null;
+                    if($key !== "GLOBALS") {
+                        global $$key; // @see http://php.net/manual/en/language.variables.predefined.php#30484 && http://phpover.org/Language_Reference/Variables/_security_issue_and_workaround_
+                        $$key = null;
+                    }
                 }
+                $GLOBALS = null;
             }
 
             // make variables available
@@ -105,17 +110,32 @@ class Sandbox{
         };
 
         $fn = Closure::bind($fn, null, null); // make $this unavailable
-        $res = $fn($code);
+
+        $e = null; // make sure we reset the globals even if the eval error's out
+        $res = null;
+        try{
+            $res = $fn($code);
+        }catch(\Exception $e){
+
+        }
 
         /**
          * Reassign GLOBAL values
          */
+        if(array_key_exists("GLOBALS",$backup)){
+            $GLOBALS = $backup["GLOBALS"];
+            unset($backup["GLOBALS"]);
+        }
         foreach($backup as $key => $val){
             if(array_key_exists($key,$preserved)){
                 continue;
             }
             global $$key; // @see http://php.net/manual/en/language.variables.predefined.php#30484
             $$key = $val;
+        }
+
+        if($e !== null){
+            throw $e;
         }
 
         return $res;
