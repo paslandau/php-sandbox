@@ -48,7 +48,7 @@ $_GET["foo"] = 2;
         return $fn();
 ';
         $res = $sandbox->execute($code);
-        var_dump($res);
+//        var_dump($res);
         $this->assertNotEquals(1,$res);
     }
 

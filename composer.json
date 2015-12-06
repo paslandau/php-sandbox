@@ -23,11 +23,11 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "php": "~5.5",
+    "php": ">=5.5",
     "nikic/php-parser": "^1.4.1"
   },
   "require-dev": {
-    "paslandau/io-utility": "^0.1.2",
+    "paslandau/io-utility": "^0.7.0",
     "phpunit/phpunit": "~4"
   }
 }
