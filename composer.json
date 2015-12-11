@@ -27,7 +27,7 @@
     "nikic/php-parser": "^1.4.1"
   },
   "require-dev": {
-    "paslandau/io-utility": "^0.7.0",
+    "paslandau/io-utility": "dev-master",
     "phpunit/phpunit": "~4"
   }
 }
