@@ -29,5 +29,8 @@
   "require-dev": {
     "paslandau/io-utility": "dev-master",
     "phpunit/phpunit": "~4"
+  },
+  "config": {
+    "secure-http": false
   }
 }
